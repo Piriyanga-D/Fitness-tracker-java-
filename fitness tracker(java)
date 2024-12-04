@@ -1,0 +1,93 @@
+import java.awt.*;
+import java.awt.event.*;
+
+public class FitnessTrackerAWT extends Frame {
+    // Class variables
+    private int steps;
+    private double caloriesBurned;
+    private double distanceCovered;
+
+    // GUI components
+    private TextField stepsField;
+    private TextArea statsArea;
+    private Button logStepsButton, viewStatsButton, exitButton;
+
+    // Constructor
+    public FitnessTrackerAWT() {
+        // Initialize variables
+        steps = 0;
+        caloriesBurned = 0.0;
+        distanceCovered = 0.0;
+
+        // Set up the main frame
+        setTitle("Fitness Tracker");
+        setSize(400, 300);
+        setLayout(new FlowLayout());
+        setBackground(Color.LIGHT_GRAY);
+
+        // Add components
+        add(new Label("Enter Steps:"));
+        stepsField = new TextField(10);
+        add(stepsField);
+
+        logStepsButton = new Button("Log Steps");
+        add(logStepsButton);
+
+        viewStatsButton = new Button("View Stats");
+        add(viewStatsButton);
+
+        exitButton = new Button("Exit");
+        add(exitButton);
+
+        statsArea = new TextArea(10, 35);
+        statsArea.setEditable(false);
+        add(statsArea);
+
+        // Add action listeners
+        logStepsButton.addActionListener(e -> logSteps());
+        viewStatsButton.addActionListener(e -> displayStats());
+        exitButton.addActionListener(e -> System.exit(0));
+
+        // Window close action
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                System.exit(0);
+            }
+        });
+    }
+
+    // Method to log steps
+    private void logSteps() {
+        try {
+            int newSteps = Integer.parseInt(stepsField.getText());
+            if (newSteps < 0) {
+                statsArea.setText("Steps cannot be negative!");
+                return;
+            }
+
+            steps += newSteps;
+            distanceCovered += newSteps * 0.0008; // Average step length in km
+            caloriesBurned += newSteps * 0.04;   // Calories burned per step
+
+            statsArea.setText("Steps logged successfully!");
+            stepsField.setText(""); // Clear input field
+        } catch (NumberFormatException ex) {
+            statsArea.setText("Please enter a valid number of steps!");
+        }
+    }
+
+    // Method to display fitness data
+    private void displayStats() {
+        statsArea.setText("Fitness Tracker Stats:\n");
+        statsArea.append("-----------------------\n");
+        statsArea.append("Total Steps: " + steps + "\n");
+        statsArea.append(String.format("Distance Covered: %.2f km\n", distanceCovered));
+        statsArea.append(String.format("Calories Burned: %.2f kcal\n", caloriesBurned));
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        FitnessTrackerAWT trackerApp = new FitnessTrackerAWT();
+        trackerApp.setVisible(true);
+    }
+}
